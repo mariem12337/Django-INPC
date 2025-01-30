@@ -23,27 +23,55 @@ class WilayaForm(forms.ModelForm):
         fields = ['code', 'name']
 
 
-# Formulaire pour Moughataa 
 class MoughataaForm(forms.ModelForm):
+    wilaya = forms.ModelChoiceField(queryset=Wilaya.objects.all(), required=True)  # ✅ Correction ici
+
     class Meta:
         model = Moughataa
         fields = ['code', 'label', 'wilaya']
 
 
 
-# Formulaire pour Commune
+
 class CommuneForm(forms.ModelForm):
+    moughataa = forms.ModelChoiceField(
+        queryset=Moughataa.objects.all(),
+        required=True,
+        label="Moughataa",
+        widget=forms.Select(attrs={'class': 'form-control glowing-input'})  # Ajout d'un style Bootstrap
+    )
+
     class Meta:
         model = Commune
         fields = ['code', 'name', 'moughataa']
+        widgets = {
+            'code': forms.TextInput(attrs={'class': 'form-control glowing-input'}),
+            'name': forms.TextInput(attrs={'class': 'form-control glowing-input'}),
+        }
 
-
-
-# Formulaire pour Product
 class ProductForm(forms.ModelForm):
+    product_type = forms.ModelChoiceField(
+        queryset=ProductType.objects.all(),
+        required=True,
+        label="Type de Produit",
+        widget=forms.Select(attrs={'class': 'form-control glowing-input'})
+    )
+    famille = forms.ModelChoiceField(
+        queryset=Famille.objects.all(),
+        required=True,
+        label="Famille",
+        widget=forms.Select(attrs={'class': 'form-control glowing-input'})
+    )
+
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = ['code', 'name', 'description', 'unit_measure', 'product_type', 'famille']
+        widgets = {
+            'code': forms.TextInput(attrs={'class': 'form-control glowing-input'}),
+            'name': forms.TextInput(attrs={'class': 'form-control glowing-input'}),
+            'description': forms.Textarea(attrs={'class': 'form-control glowing-input'}),
+            'unit_measure': forms.TextInput(attrs={'class': 'form-control glowing-input'}),
+        }
 
 
 # Formulaire pour ProductType
@@ -53,11 +81,25 @@ class ProductTypeForm(forms.ModelForm):
         fields = ['code', 'label', 'description']
 
 
-# Formulaire pour PointOfSale
+
 class PointOfSaleForm(forms.ModelForm):
+    commune = forms.ModelChoiceField(
+        queryset=Commune.objects.all(),
+        required=True,
+        label="Commune",
+        widget=forms.Select(attrs={'class': 'form-control glowing-input'})
+    )
+
     class Meta:
         model = PointOfSale
         fields = ['code', 'type', 'gps_lat', 'gps_lon', 'commune']
+        widgets = {
+            'code': forms.TextInput(attrs={'class': 'form-control glowing-input'}),
+            'type': forms.TextInput(attrs={'class': 'form-control glowing-input'}),
+            'gps_lat': forms.NumberInput(attrs={'class': 'form-control glowing-input', 'step': 'any'}),
+            'gps_lon': forms.NumberInput(attrs={'class': 'form-control glowing-input', 'step': 'any'}),
+        }
+
 
 
 

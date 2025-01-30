@@ -10,12 +10,10 @@
         <div class="card-header text-center">
             <h1 class="display-4">Gestion des Produits</h1>
             <p class="lead">Ajoutez, modifiez et gérez les produits facilement.</p>
-            <p id="clock"></p>
         </div>
 
         <div class="card-body animate__animated animate__fadeInUp">
             <div class="d-flex justify-content-between mb-3">
-                <!-- Export / Import Buttons -->
                 <a href="{% url 'export_data' %}?table=Product" class="btn btn-success">
                     <i class="fas fa-file-export"></i> Exporter les Produits
                 </a>
@@ -24,12 +22,12 @@
                 </a>
             </div>
 
-            <!-- Button to Open Add Product Modal -->
+            <!-- Bouton pour ouvrir le modal d'ajout -->
             <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
                 <i class="fas fa-plus"></i> Ajouter un Produit
             </button>
 
-            <!-- Product Table -->
+            <!-- Tableau des Produits -->
             <table class="table table-hover table-striped text-white">
                 <thead class="bg-dark">
                     <tr>
@@ -54,7 +52,7 @@
                         <td>{{ produit.product_type.label }}</td>
                         <td>{{ produit.famille.nom }}</td>
                         <td>
-                            <!-- Action Buttons -->
+                            <!-- Boutons d'action -->
                             <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal{{ produit.id }}">
                                 <i class="fas fa-eye"></i> Voir
                             </button>
@@ -71,7 +69,7 @@
                         </td>
                     </tr>
 
-                    <!-- Modal: View Product Details -->
+                    <!-- Modal: Voir les détails du produit -->
                     <div class="modal fade" id="viewModal{{ produit.id }}" tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -92,7 +90,7 @@
                         </div>
                     </div>
 
-                    <!-- Modal: Edit Product -->
+                    <!-- Modal: Modifier un Produit -->
                     <div class="modal fade" id="editModal{{ produit.id }}" tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -102,24 +100,25 @@
                                 </div>
                                 <form method="post">
                                     {% csrf_token %}
+                                    <input type="hidden" name="modifier" value="1">
+                                    <input type="hidden" name="produit_id" value="{{ produit.id }}">
                                     <div class="modal-body">
-                                        <input type="hidden" name="produit_id" value="{{ produit.id }}">
                                         <div class="mb-3">
                                             <label class="form-label">Code</label>
-                                            <input type="text" name="code" class="form-control glowing-input" value="{{ produit.code }}">
+                                            <input type="text" name="code" class="form-control glowing-input" value="{{ produit.code }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Nom</label>
-                                            <input type="text" name="name" class="form-control glowing-input" value="{{ produit.name }}">
+                                            <input type="text" name="name" class="form-control glowing-input" value="{{ produit.name }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Description</label>
-                                            <textarea name="description" class="form-control glowing-input">{{ produit.description }}</textarea>
+                                            <textarea name="description" class="form-control glowing-input" required>{{ produit.description }}</textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                        <button type="submit" name="modifier" class="btn btn-warning">Enregistrer</button>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
                                     </div>
                                 </form>
                             </div>
@@ -132,8 +131,39 @@
     </div>
 </div>
 
-<!-- JavaScript for Enhancements -->
+<!-- Modal: Ajouter un Nouveau Produit -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ajouter un Produit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="creer" value="1">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Code</label>
+                        <input type="text" name="code" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" name="name" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control glowing-input" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="{% static 'js/crud.js' %}"></script>
-
-
 {% endblock %}

@@ -11,7 +11,6 @@
         <div class="card-header text-center">
             <h1 class="display-4">Gestion des Communes</h1>
             <p class="lead">Ajoutez, modifiez et gérez les communes efficacement.</p>
-            <p id="clock"></p>
         </div>
 
         <div class="card-body animate__animated animate__fadeInUp">
@@ -58,6 +57,7 @@
                             </button>
                             <form method="post" style="display:inline;">
                                 {% csrf_token %}
+                                <input type="hidden" name="supprimer" value="1"> <!-- ✅ Ajout pour éviter erreurs -->
                                 <input type="hidden" name="commune_id" value="{{ commune.id }}">
                                 <button type="submit" class="btn btn-danger">
                                     <i class="fas fa-trash"></i> Supprimer
@@ -65,6 +65,48 @@
                             </form>
                         </td>
                     </tr>
+
+                    <!-- Modal: Edit Commune -->
+                    <div class="modal fade" id="editModal{{ commune.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier Commune</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="modifier" value="1">
+                                    <input type="hidden" name="commune_id" value="{{ commune.id }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Code</label>
+                                            <input type="text" name="code" class="form-control glowing-input" value="{{ commune.code }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Nom</label>
+                                            <input type="text" name="name" class="form-control glowing-input" value="{{ commune.name }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Moughataa</label>
+                                            <select name="moughataa" class="form-control glowing-input" required>
+                                                {% for moughataa in moughataas %}
+                                                <option value="{{ moughataa.id }}" {% if moughataa.id == commune.moughataa.id %}selected{% endif %}>
+                                                    {{ moughataa.label }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <button type="submit" class="btn btn-primary">Modifier</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                     {% endfor %}
                 </tbody>
             </table>
@@ -72,5 +114,44 @@
     </div>
 </div>
 
+<!-- Modal: Add New Commune -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ajouter une Commune</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="creer" value="1">  <!-- ✅ Correction pour éviter conflits -->
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Code</label>
+                        <input type="text" name="code" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" name="name" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Moughataa</label>
+                        <select name="moughataa" class="form-control glowing-input" required>
+                            {% for moughataa in moughataas %}
+                            <option value="{{ moughataa.id }}">{{ moughataa.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Enhancements -->
 <script src="{% static 'js/crud.js' %}"></script>
 {% endblock %}

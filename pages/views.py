@@ -143,31 +143,42 @@ def gestion_wilayas(request):
 
 # 2️⃣ Moughataa
 def gestion_moughataas(request):
-    moughataas = Moughataa.objects.all()  # Fetch all Moughataas from the database
-    wilayas = Wilaya.objects.all()  # Fetch all Wilayas from the database
-    form = MoughataaForm(request.POST or None)
+    moughataas = Moughataa.objects.all()  # Récupérer toutes les Moughataas
+    wilayas = Wilaya.objects.all()  # Récupérer toutes les Wilayas
+    form = MoughataaForm()
 
     if request.method == 'POST':
-        if 'creer' in request.POST and form.is_valid():
-            print("Formulaire valide")  # Check if the form is valid
-            form.save()  # Save the new Moughataa
-            return redirect('gestion_moughataas')  # Redirect to refresh the page with new data
-        else:
-            print("Formulaire invalide :", form.errors)  # Print errors if the form is invalid
+        print("Requête POST reçue:", request.POST)  # Debug pour voir le POST envoyé
 
-        if 'modifier' in request.POST:
+        # 🔹 1. Création d'une nouvelle Moughataa
+        if 'creer' in request.POST:
+            form = MoughataaForm(request.POST)
+            if form.is_valid():
+                print("Formulaire valide, création en cours...")
+                form.save()
+                return redirect('gestion_moughataas')
+            else:
+                print("Formulaire invalide :", form.errors.as_json())
+
+        # 🔹 2. Modification d'une Moughataa existante
+        elif 'modifier' in request.POST:
             moughataa_id = request.POST.get('moughataa_id')
             moughataa = get_object_or_404(Moughataa, id=moughataa_id)
             form = MoughataaForm(request.POST, instance=moughataa)
             if form.is_valid():
+                print("Modification enregistrée")
                 form.save()
-                return redirect('gestion_moughataas')  # Redirect after saving
+                return redirect('gestion_moughataas')
+            else:
+                print("Formulaire de modification invalide :", form.errors.as_json())
 
-        if 'supprimer' in request.POST:
-            moughataa_id = request.POST.get('moughataa_id')
+        # 🔹 3. Suppression d'une Moughataa
+        elif 'supprimer' in request.POST:
+            moughataa_id = request.POST.get('moughataa_id')  
             moughataa = get_object_or_404(Moughataa, id=moughataa_id)
-            moughataa.delete()  # Delete the Moughataa
-            return redirect('gestion_moughataas')  # Redirect after deletion
+            moughataa.delete()
+            print(f"Moughataa {moughataa_id} supprimée avec succès")
+            return redirect('gestion_moughataas')
 
     context = {
         'moughataas': moughataas,
@@ -177,71 +188,100 @@ def gestion_moughataas(request):
     return render(request, 'pages/gestion_moughataas.html', context)
 
 
-# 3️⃣ Commune
-def gestion_communes(request):
-    communes = Commune.objects.all()  # Fetch all communes
-    moughataas = Moughataa.objects.all()  # Fetch all moughataas
-    commune = None  # To store the commune object in case of edit
 
-    # Handle POST request for creation, modification, and deletion of communes
+
+def gestion_communes(request):
+    communes = Commune.objects.all()  # Récupérer toutes les Communes
+    moughataas = Moughataa.objects.all()  # Récupérer toutes les Moughataas
+    form = CommuneForm()  # Formulaire vide par défaut
+    commune = None  # Commune vide par défaut
+
     if request.method == 'POST':
-        if 'creer' in request.POST:  # When creating a new commune
+        print("Requête POST reçue :", request.POST)  # Debugging
+        
+        # 🔹 Création d'une nouvelle Commune
+        if 'creer' in request.POST:
             form = CommuneForm(request.POST)
             if form.is_valid():
-                form.save()  # Save the new commune
-                return redirect('gestion_communes')  # Redirect to the commune list page
-        elif 'modifier' in request.POST:  # When modifying an existing commune
+                form.save()
+                print("✅ Commune créée avec succès !")
+                return redirect('gestion_communes')
+            else:
+                print("❌ Erreur de validation :", form.errors.as_json())
+
+        # 🔹 Modification d'une Commune existante
+        elif 'modifier' in request.POST:
             commune_id = request.POST.get('commune_id')
-            commune = get_object_or_404(Commune, id=commune_id)  # Get the commune object by ID
-            form = CommuneForm(request.POST, instance=commune)  # Pre-populate form with existing commune data
+            commune = get_object_or_404(Commune, id=commune_id)
+            form = CommuneForm(request.POST, instance=commune)
             if form.is_valid():
-                form.save()  # Save the updated commune
-                return redirect('gestion_communes')  # Redirect to the commune list page
-        elif 'supprimer' in request.POST:  # When deleting a commune
+                form.save()
+                print(f"✅ Commune {commune_id} modifiée avec succès !")
+                return redirect('gestion_communes')
+            else:
+                print("❌ Erreur de modification :", form.errors.as_json())
+
+        # 🔹 Suppression d'une Commune
+        elif 'supprimer' in request.POST:
             commune_id = request.POST.get('commune_id')
-            commune = get_object_or_404(Commune, id=commune_id)  # Get the commune object by ID
-            commune.delete()  # Delete the commune
-            return redirect('gestion_communes')  # Redirect to the commune list page
+            commune = get_object_or_404(Commune, id=commune_id)
+            commune.delete()
+            print(f"✅ Commune {commune_id} supprimée avec succès !")
+            return redirect('gestion_communes')
 
-    # If not a POST request, show the form with empty data or pre-populated data for editing
-    if not commune:  # For creating a new commune (no commune object)
-        form = CommuneForm()  # Empty form for new commune
+    # 🔹 Contexte à passer au template
+    context = {
+        'communes': communes,
+        'moughataas': moughataas,
+        'form': form,
+        'commune': commune  # Utilisé uniquement en cas de modification
+    }
+    return render(request, 'pages/gestion_communes.html', context)
 
-    # Render the template with context
-    return render(request, 'pages/gestion_communes.html', {
-        'communes': communes,  # Pass all communes to the template
-        'moughataas': moughataas,  # Pass all moughataas to the template
-        'form': form,  # Pass the form (either empty or pre-populated)
-        'commune': commune  # Pass the commune object (only for editing)
-    })
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Product, ProductType, Famille
+from .forms import ProductForm
 
-# 4️⃣ Product
 def gestion_produits(request):
     product_types = ProductType.objects.all()
     familles = Famille.objects.all()
     produits = Product.objects.all()
-
-    form = ProductForm(request.POST or None)
-    produit = None
+    form = ProductForm()
+    produit = None  # Pour stocker un produit en cas de modification
 
     if request.method == 'POST':
-        if 'creer' in request.POST and form.is_valid():
-            form.save()
-            return redirect('gestion_produits')
-        if 'modifier' in request.POST:
+        print("Requête POST reçue :", request.POST)  # Debugging
+
+        # 🔹 Création d'un produit
+        if 'creer' in request.POST:
+            form = ProductForm(request.POST)
+            if form.is_valid():
+                form.save()
+                print("✅ Produit créé avec succès !")
+                return redirect('gestion_produits')
+            else:
+                print("❌ Erreur de validation :", form.errors.as_json())
+
+        # 🔹 Modification d'un produit existant
+        elif 'modifier' in request.POST:
             produit_id = request.POST.get('produit_id')
             produit = get_object_or_404(Product, id=produit_id)
             form = ProductForm(request.POST, instance=produit)
             if form.is_valid():
                 form.save()
+                print(f"✅ Produit {produit_id} modifié avec succès !")
                 return redirect('gestion_produits')
-        if 'supprimer' in request.POST:
+            else:
+                print("❌ Erreur de modification :", form.errors.as_json())
+
+        # 🔹 Suppression d'un produit
+        elif 'supprimer' in request.POST:
             produit_id = request.POST.get('produit_id')
             produit = get_object_or_404(Product, id=produit_id)
             produit.delete()
+            print(f"✅ Produit {produit_id} supprimé avec succès !")
             return redirect('gestion_produits')
 
-    # Combinez toutes les données dans un seul dictionnaire
     context = {
         'produits': produits,
         'form': form,
@@ -251,6 +291,7 @@ def gestion_produits(request):
     }
 
     return render(request, 'pages/gestion_produits.html', context)
+
 
 # ProductType (Types de produits)
 from django.shortcuts import render, redirect, get_object_or_404
@@ -286,37 +327,51 @@ def gestion_product_types(request):
 
     return render(request, 'pages/gestion_product_types.html', {'product_types': product_types, 'form': form})
 
-# PointOfSale (Points de vente)
+
+
 def gestion_points_de_vente(request):
     points_de_vente = PointOfSale.objects.all()
-    communes = Commune.objects.all()  # Get all communes to pass to the template
-    form = PointOfSaleForm(request.POST or None)
+    communes = Commune.objects.all()
+    form = PointOfSaleForm()
     
     if request.method == 'POST':
-        if 'creer' in request.POST and form.is_valid():
-            form.save()
-            return redirect('gestion_points_de_vente')
+        print("Requête POST reçue :", request.POST)  # Debugging
+        
+        # 🔹 Création d'un nouveau Point de Vente
+        if 'creer' in request.POST:
+            form = PointOfSaleForm(request.POST)
+            if form.is_valid():
+                form.save()
+                print("✅ Point de Vente créé avec succès !")
+                return redirect('gestion_points_de_vente')
+            else:
+                print("❌ Erreur de validation :", form.errors.as_json())
 
-        if 'modifier' in request.POST:
+        # 🔹 Modification d'un Point de Vente existant
+        elif 'modifier' in request.POST:
             point_id = request.POST.get('point_id')
             point = get_object_or_404(PointOfSale, id=point_id)
             form = PointOfSaleForm(request.POST, instance=point)
             if form.is_valid():
                 form.save()
+                print(f"✅ Point de Vente {point_id} modifié avec succès !")
                 return redirect('gestion_points_de_vente')
+            else:
+                print("❌ Erreur de modification :", form.errors.as_json())
 
-        if 'supprimer' in request.POST:
+        # 🔹 Suppression d'un Point de Vente
+        elif 'supprimer' in request.POST:
             point_id = request.POST.get('point_id')
             point = get_object_or_404(PointOfSale, id=point_id)
             point.delete()
+            print(f"✅ Point de Vente {point_id} supprimé avec succès !")
             return redirect('gestion_points_de_vente')
 
     context = {
         'points_de_vente': points_de_vente,
-        'communes': communes,  # Ensure communes are passed to the template
-        'form': form,
+        'communes': communes,
+        'form': form
     }
-
     return render(request, 'pages/gestion_points_de_vente.html', context)
 
 

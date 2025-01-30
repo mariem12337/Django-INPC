@@ -14,7 +14,6 @@
 
         <div class="card-body animate__animated animate__fadeInUp">
             <div class="d-flex justify-content-between mb-3">
-                <!-- Export / Import Buttons -->
                 <a href="{% url 'export_data' %}?table=PointOfSale" class="btn btn-success">
                     <i class="fas fa-file-export"></i> Exporter les Points de Vente
                 </a>
@@ -23,12 +22,10 @@
                 </a>
             </div>
 
-            <!-- Button to Open Add Point of Sale Modal -->
             <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
                 <i class="fas fa-plus"></i> Ajouter un Point de Vente
             </button>
 
-            <!-- Points of Sale Table -->
             <table class="table table-hover table-striped text-white">
                 <thead class="bg-dark">
                     <tr>
@@ -51,7 +48,6 @@
                         <td>{{ point.gps_lon }}</td>
                         <td>{{ point.commune.name }}</td>
                         <td>
-                            <!-- Action Buttons -->
                             <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal{{ point.id }}">
                                 <i class="fas fa-eye"></i> Voir
                             </button>
@@ -60,13 +56,62 @@
                             </button>
                             <form method="post" style="display:inline;">
                                 {% csrf_token %}
+                                <input type="hidden" name="supprimer" value="1">
                                 <input type="hidden" name="point_id" value="{{ point.id }}">
-                                <button type="submit" name="supprimer" class="btn btn-danger">
+                                <button type="submit" class="btn btn-danger">
                                     <i class="fas fa-trash"></i> Supprimer
                                 </button>
                             </form>
                         </td>
                     </tr>
+
+                    <!-- Modal: Edit Point of Sale -->
+                    <div class="modal fade" id="editModal{{ point.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier Point de Vente</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="modifier" value="1">
+                                    <input type="hidden" name="point_id" value="{{ point.id }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Code</label>
+                                            <input type="text" name="code" class="form-control glowing-input" value="{{ point.code }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Type</label>
+                                            <input type="text" name="type" class="form-control glowing-input" value="{{ point.type }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Latitude</label>
+                                            <input type="number" step="any" name="gps_lat" class="form-control glowing-input" value="{{ point.gps_lat }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Longitude</label>
+                                            <input type="number" step="any" name="gps_lon" class="form-control glowing-input" value="{{ point.gps_lon }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Commune</label>
+                                            <select name="commune" class="form-control glowing-input" required>
+                                                {% for commune in communes %}
+                                                <option value="{{ commune.id }}" {% if commune.id == point.commune.id %}selected{% endif %}>{{ commune.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <button type="submit" class="btn btn-primary">Modifier</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                     {% endfor %}
                 </tbody>
             </table>
@@ -84,6 +129,7 @@
             </div>
             <form method="post">
                 {% csrf_token %}
+                <input type="hidden" name="creer" value="1">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Code</label>
@@ -120,7 +166,4 @@
 </div>
 
 <script src="{% static 'js/crud.js' %}"></script>
-
-<!-- Custom CSS -->
-
 {% endblock %}

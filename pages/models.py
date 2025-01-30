@@ -62,7 +62,7 @@ class PointOfSale(models.Model):
     commune = models.ForeignKey(Commune, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.code
+        return f"{self.code} - {self.commune.name}"
 
 # 4️⃣ Prix des produits
 class ProductPrice(models.Model):

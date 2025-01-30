@@ -9,7 +9,6 @@
         <div class="card-header text-center">
             <h1 class="display-4">Gestion des Moughataas</h1>
             <p class="lead">Ajoutez, modifiez et gérez les Moughataas efficacement.</p>
-            <p id="clock"></p>
         </div>
 
         <div class="card-body animate__animated animate__fadeInUp">
@@ -56,6 +55,7 @@
                             </button>
                             <form method="post" style="display:inline;">
                                 {% csrf_token %}
+                                <input type="hidden" name="supprimer" value="1"> <!-- ✅ Ajout pour éviter les erreurs -->
                                 <input type="hidden" name="moughataa_id" value="{{ moughataa.id }}">
                                 <button type="submit" class="btn btn-danger">
                                     <i class="fas fa-trash"></i> Supprimer
@@ -63,6 +63,46 @@
                             </form>
                         </td>
                     </tr>
+
+                    <!-- Modal: Edit Moughataa -->
+                    <div class="modal fade" id="editModal{{ moughataa.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier Moughataa</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="modifier" value="1"> <!-- ✅ Ajout pour différencier -->
+                                    <input type="hidden" name="moughataa_id" value="{{ moughataa.id }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Code</label>
+                                            <input type="text" name="code" class="form-control glowing-input" value="{{ moughataa.code }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Label</label>
+                                            <input type="text" name="label" class="form-control glowing-input" value="{{ moughataa.label }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Wilaya</label>
+                                            <select name="wilaya" class="form-control glowing-input" required>
+                                                {% for wilaya in wilayas %}
+                                                <option value="{{ wilaya.id }}" {% if wilaya.id == moughataa.wilaya.id %}selected{% endif %}>{{ wilaya.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <button type="submit" class="btn btn-primary">Modifier</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                     {% endfor %}
                 </tbody>
             </table>
@@ -80,6 +120,7 @@
             </div>
             <form method="post">
                 {% csrf_token %}
+                <input type="hidden" name="creer" value="1">  <!-- ✅ Correction pour éviter conflits -->
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Code</label>
@@ -109,6 +150,4 @@
 
 <!-- JavaScript for Enhancements -->
 <script src="{% static 'js/crud.js' %}"></script>
-
-
 {% endblock %}
