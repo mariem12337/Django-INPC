@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="container-fluid bg-primary bg-gradient text-white py-5">
+    <div class="container">
+        <div class="d-flex align-items-center gap-4 mb-4">
+            <i class="fas fa-chart-line fa-3x"></i>
+            <div>
+                <h1 class="display-4 fw-bold">Résultat INPC</h1>
+                <p class="lead">Indice National des Prix à la Consommation</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container mt-n5">
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-4 p-md-5">
+            
+            <!-- Result Card -->
+            <div class="card bg-success text-white mb-4 animate__animated animate__fadeInUp">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            <i class="fas fa-trophy fa-4x"></i>
+                        </div>
+                        <div class="col-md-8">
+                            <h2 class="card-title mb-3">
+                                Calcul Validé !
+                                <i class="fas fa-check-circle ms-2"></i>
+                            </h2>
+                            <div class="display-2 fw-bold">
+                                {{ inpc|floatformat:2 }}
+                                <small class="fs-4">points</small>
+                            </div>
+                            <div class="fs-5">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                {{ month|stringformat:"02d" }}/{{ year }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Section -->
+            <div class="row g-4 mb-4">
+                <!-- Trend Card -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <i class="fas fa-chart-simple me-2"></i>
+                            Évolution Mensuelle
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-primary text-white rounded-circle p-3">
+                                    <i class="fas fa-arrow-trend-up fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h3 class="mb-0">+2.3%</h3>
+                                    <small class="text-muted">vs mois précédent</small>
+                                </div>
+                            </div>
+                            <hr>
+                            <canvas id="trendChart" style="height: 150px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sector Impact -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-info">
+                        <div class="card-header bg-info text-white">
+                            <i class="fas fa-industry me-2"></i>
+                            Impact Sectoriel
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Alimentation</span>
+                                    <span class="badge bg-danger">+3.1%</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Énergie</span>
+                                    <span class="badge bg-warning">+1.8%</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Services</span>
+                                    <span class="badge bg-success">+0.9%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-3 d-lg-flex justify-content-lg-center">
+                <a href="{% url 'calculate_inpc' %}" 
+                   class="btn btn-primary btn-lg px-5 rounded-pill">
+                    <i class="fas fa-calculator me-2"></i>Nouveau Calcul
+                </a>
+                
+                <a href="{% url 'home' %}" 
+                   class="btn btn-outline-secondary btn-lg px-5 rounded-pill">
+                    <i class="fas fa-dashboard me-2"></i>Tableau de Bord
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .animate__animated {
+        animation-duration: 0.8s;
+    }
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,0.15)!important;
+    }
+    .rounded-circle {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js Integration -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Configuration du graphique
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['M-3', 'M-2', 'M-1', 'Actuel'],
+            datasets: [{
+                label: 'Évolution INPC',
+                data: [142.1, 145.3, 148.2, { inpc,floatformat:1 },],
+                borderColor: '#0d6efd',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+</script>
+{% endblock %}

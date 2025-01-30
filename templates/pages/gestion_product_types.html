@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Types de Produits{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/stylecrud.css' %}">
+<div class="container mt-5">
+    <div class="card shadow-lg text-white animate__animated animate__fadeInDown">
+        <div class="card-header text-center">
+            <h1 class="display-4">Gestion des Types de Produits</h1>
+            <p class="lead">Ajoutez, modifiez et gérez les types de produits facilement.</p>
+            <p id="clock"></p>
+        </div>
+
+        <div class="card-body animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between mb-3">
+                <!-- Export / Import Buttons -->
+                <a href="{% url 'export_data' %}?table=ProductType" class="btn btn-success">
+                    <i class="fas fa-file-export"></i> Exporter les Types de Produits
+                </a>
+                <a href="{% url 'import_data' %}" class="btn btn-success">
+                    <i class="fas fa-file-import"></i> Importer des données
+                </a>
+            </div>
+
+            <!-- Button to Open Add Product Type Modal -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Ajouter un Type de Produit
+            </button>
+
+            <!-- Product Type Table -->
+            <table class="table table-hover table-striped text-white">
+                <thead class="bg-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Code</th>
+                        <th>Label</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product_type in product_types %}
+                    <tr class="animate__animated animate__fadeIn">
+                        <td>{{ product_type.id }}</td>
+                        <td>{{ product_type.code }}</td>
+                        <td>{{ product_type.label }}</td>
+                        <td>{{ product_type.description }}</td>
+                        <td>
+                            <!-- Action Buttons -->
+                            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal{{ product_type.id }}">
+                                <i class="fas fa-eye"></i> Voir
+                            </button>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ product_type.id }}">
+                                <i class="fas fa-edit"></i> Modifier
+                            </button>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_id" value="{{ product_type.id }}">
+                                <button type="submit" name="supprimer" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Modal: View Product Type Details -->
+                    <div class="modal fade" id="viewModal{{ product_type.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Détails du Type de Produit</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>ID :</strong> {{ product_type.id }}</p>
+                                    <p><strong>Code :</strong> {{ product_type.code }}</p>
+                                    <p><strong>Label :</strong> {{ product_type.label }}</p>
+                                    <p><strong>Description :</strong> {{ product_type.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal: Edit Product Type -->
+                    <div class="modal fade" id="editModal{{ product_type.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier le Type de Produit</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        <input type="hidden" name="edit_id" value="{{ product_type.id }}">
+                                        <div class="mb-3">
+                                            <label class="form-label">Code</label>
+                                            <input type="text" name="code" class="form-control glowing-input" value="{{ product_type.code }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Label</label>
+                                            <input type="text" name="label" class="form-control glowing-input" value="{{ product_type.label }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Description</label>
+                                            <textarea name="description" class="form-control glowing-input">{{ product_type.description }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <button type="submit" name="modifier" class="btn btn-warning">Enregistrer</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/crud.js' %}"></script>
+
+
+{% endblock %}

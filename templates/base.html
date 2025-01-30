@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mon Projet Django{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome CSS -->
+<link 
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" 
+rel="stylesheet" 
+integrity="sha512-dIe0kIh2pn/J4RZgHEWAn0rURfAM2B8B3D9gKABy3/Pqm6m3W9E9st6CX+YOH0fTKPEt2Yb4g76r1H//W8OA8w==" 
+crossorigin="anonymous" 
+referrerpolicy="no-referrer" 
+/>
+<!-- Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<!-- Bootstrap CSS -->
+<link 
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+rel="stylesheet" 
+integrity="sha384-rbsA2VBKQZ1lB9phGxC4VcLLHklB5Ft6QQwl80tXtRaJ1Q8CQALTTXeVSmz9TOXa" 
+crossorigin="anonymous"
+/>
+
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+
+    
+</head>
+<body>
+    <!-- Barre de navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="#">
+          <i class="fas fa-calculator"></i> INPC Calculator
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                  <a class="nav-link nav-hover" href="{% url 'accueil' %}">
+                      <i class="fas fa-home"></i> Accueil
+                  </a>
+              </li>
+
+              <!-- Dropdown Localisation -->
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle nav-hover" href="#" id="dropdownLocalisation" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fas fa-map-marker-alt"></i> Localisation
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item" href="{% url 'gestion_wilayas' %}"><i class="fas fa-map"></i> Wilayas</a></li>
+                      <li><a class="dropdown-item" href="{% url 'gestion_moughataas' %}"><i class="fas fa-map-marker-alt"></i> Moughataas</a></li>
+                      <li><a class="dropdown-item" href="{% url 'gestion_communes' %}"><i class="fas fa-city"></i> Communes</a></li>
+                      <li><a class="dropdown-item" href="{% url 'gestion_points_de_vente' %}"><i class="fas fa-store"></i> Points de Vente</a></li>
+                  </ul>
+              </li>
+
+              <!-- Dropdown Autres -->
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle nav-hover" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fas fa-bars"></i> Autres
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item" href="{% url 'gestion_produits' %}"><i class="fas fa-box"></i> Produits</a></li>
+                      <li><a class="dropdown-item" href="{% url 'gestion_product_types' %}"><i class="fas fa-tags"></i> Types de Produits</a></li>
+                      <li><a class="dropdown-item" href="{% url 'gestion_product_prices' %}"><i class="fas fa-dollar-sign"></i> Prix des Produits</a></li>
+                      <li><a class="dropdown-item" href="{% url 'gestion_paniers' %}"><i class="fas fa-shopping-cart"></i> Paniers</a></li>
+                      <li><a class="dropdown-item" href="{% url 'gestion_cart_products' %}"><i class="fas fa-list"></i> Produits dans les Paniers</a></li>
+                      <li><a class="dropdown-item" href="{% url 'gestion_familles' %}"><i class="fas fa-folder"></i> Familles</a></li>
+                  </ul>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link nav-hover" href="{% url 'import_data' %}">
+                      <i class="fas fa-file-import"></i> Import
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link nav-hover" href="{% url 'export_data' %}">
+                      <i class="fas fa-file-export"></i> Export
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="btn btn-primary text-white px-4 py-2 rounded-pill shadow-sm d-flex align-items-center gap-2" href="{% url 'connexion' %}">
+                    <i class="fas fa-sign-in-alt"></i> <span>Connexion</span>
+                </a>
+            </li>
+            
+          </ul>
+      </div>
+  </div>
+</nav>
+
+
+    <!-- Contenu principal -->
+    <div class="container mt-5">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+
+
+    <!-- JavaScript de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.btn').forEach(button => {
+          button.addEventListener('click', function () {
+            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+          });
+        });
+      </script>
+      
+</body>
+</html>

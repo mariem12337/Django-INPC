@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Exporter des données</h1>
+<form method="get" action="{% url 'export_data' %}">
+    <label for="table">Sélectionnez un modèle :</label>
+    <select name="table" id="table">
+        <option value="Wilaya">Wilayas</option>
+        <option value="Moughataa">Moughataas</option>
+        <option value="Commune">Communes</option>
+        <option value="Product">Produits</option>
+        <option value="PointOfSale">Points de vente</option>
+        <option value="ProductPrice">Prix des produits</option>
+        <option value="Cart">Paniers</option>
+        <option value="CartProducts">Produits dans les paniers</option>
+        <option value="Famille">Familles de produits</option>
+        <option value="Prix">Prix</option>
+    </select>
+    <br><br>
+    <button type="submit">Exporter</button>
+</form>
+{% endblock %}

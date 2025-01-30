@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+
+{% block title %}Indice National des Prix à la Consommation{% endblock %}
+
+{% block content %}
+<!-- Include jQuery, FontAwesome, and animate.css -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<style>
+/* Background Floating Animation */
+@keyframes moveBackground {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    background: linear-gradient(-45deg, #1e3c72, #2a5298, #134e5e, #71b280);
+    background-size: 400% 400%;
+    animation: moveBackground 10s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Arial', sans-serif;
+}
+/* Navbar styling */
+.navbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .container mt-5 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+    }
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+        max-width: 1000px;
+        width: 100%;
+        margin:auto;
+        margin-bottom: 5px ;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(12px);
+    }
+
+    /* Card header */
+    .card-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 15px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+    }
+
+
+
+    .card-body {
+        padding: 25px;
+        text-align: center;
+        
+        
+    }
+
+    .list-group{
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.15);;
+    }
+
+    .list-group::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .list-group:focus {
+        border-color: #fff;
+        outline: none;
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Stylish Blue Button */
+    .btn-success {
+        background: linear-gradient(45deg, #007bff, #00c6ff);
+        border: none;
+        padding: 12px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        font-weight: bold;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background: linear-gradient(45deg, #00c6ff, #007bff);
+        transform: scale(1.05);
+    }
+
+    /* Stylish Blue Button */
+    .btn-primary {
+        background: linear-gradient(45deg, #007bff, #00c6ff);
+        border: none;
+        padding: 12px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        font-weight: bold;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(45deg, #00c6ff, #007bff);
+        transform: scale(1.05);
+    }
+
+    .buttons{
+        margin:auto;
+        margin-bottom: 10px;
+        
+        
+    }
+
+</style>
+<div class="container mt-5">
+    <!-- Section principale -->
+    <div class="card text-white">
+        <div class="card-header">
+            <!-- Titre principal avec style amélioré -->
+            <h1  >
+                Bienvenue sur l'application INPC
+            </h1>
+            <!-- Sous-titre en noir -->
+            <p>
+                Suivez et analysez les tendances des prix nationaux avec notre application.
+            </p>
+            
+        </div>   
+    
+        <div class="card-body">
+            <h3>Évolution sur 4 mois</h3>
+            
+            <ul class="list-group">
+                {% if inpc_data %}
+                    {% for data in inpc_data %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-chart-line me-2"></i>
+                            {{ data.annee }} - {{ data.mois|date:"F" }}
+                        </div>
+                        <span class="badge bg-success rounded-pill fs-6">
+                            {{ data.inpc|floatformat:2 }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="list-group-item text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Aucune donnée disponible
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    
+
+    <!-- Bouton d'action -->
+    <div class="buttons">
+        <a href="{% url 'calculate_inpc' %}" class="btn btn-success btn-lg py-3 px-5">
+            <i class="fas fa-calculator me-2"></i>Calculer l'INPC
+        </a>
+        <br>
+        
+    </div>
+
+    </div>
+</div>
+
+<!-- Include jQuery and Font Awesome for icons (if not already included) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+
+<style>
+/* Fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Pulse effect on buttons */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.card {
+    animation: fadeIn 1s ease-in-out;
+}
+
+.btn-success, .btn-primary {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Number Counter Effect */
+.badge {
+    transition: transform 0.3s ease;
+}
+.badge:hover {
+    transform: scale(1.1);
+}
+</style>
+
+<script>
+$(document).ready(function () {
+    // Counter Animation for INPC Values
+    $(".inpc-value").each(function () {
+        let $this = $(this);
+        let value = parseFloat($this.text());
+        $this.text("0"); // Reset to zero for animation
+        $({ countNum: 0 }).animate(
+            { countNum: value },
+            {
+                duration: 2000,
+                easing: "swing",
+                step: function () {
+                    $this.text(this.countNum.toFixed(2));
+                },
+                complete: function () {
+                    $this.text(value.toFixed(2));
+                },
+            }
+        );
+    });
+
+    // Scroll Reveal Effect
+    $(window).scroll(function () {
+        $(".card-body, .buttons").each(function () {
+            if ($(this).offset().top < $(window).scrollTop() + $(window).height() - 50) {
+                $(this).css({ opacity: 1, transform: "translateY(0)" });
+            }
+        });
+    });
+
+    // Click Animation on Buttons
+    $(".btn").on("click", function () {
+        $(this).addClass("clicked");
+        setTimeout(() => $(this).removeClass("clicked"), 300);
+    });
+});
+</script>
+<script>
+    $(document).ready(function () {
+        // Counter Animation for INPC Values
+        $(".inpc-value").each(function () {
+            let $this = $(this);
+            let value = parseFloat($this.text());
+            $this.text("0");
+            $({ countNum: 0 }).animate(
+                { countNum: value },
+                {
+                    duration: 2000,
+                    easing: "swing",
+                    step: function () {
+                        $this.text(this.countNum.toFixed(2));
+                    },
+                    complete: function () {
+                        $this.text(value.toFixed(2));
+                    },
+                }
+            );
+        });
+    
+        // Live Time Update
+        function updateClock() {
+            let now = new Date();
+            let timeString = now.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            $("#clock").text("🕒 " + timeString);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    
+        // Shrinking Navbar on Scroll
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 50) {
+                $(".navbar").addClass("shrink");
+            } else {
+                $(".navbar").removeClass("shrink");
+            }
+        });
+    
+        // Scroll Reveal Effect
+        $(window).scroll(function () {
+            $(".card-body, .buttons").each(function () {
+                if ($(this).offset().top < $(window).scrollTop() + $(window).height() - 50) {
+                    $(this).css({ opacity: 1, transform: "translateY(0)" });
+                }
+            });
+        });
+    
+        // Button Click Effect
+        $(".btn").on("click", function () {
+            $(this).addClass("clicked");
+            setTimeout(() => $(this).removeClass("clicked"), 300);
+        });
+    });
+    </script>
+
+
+   
+
+{% endblock %}

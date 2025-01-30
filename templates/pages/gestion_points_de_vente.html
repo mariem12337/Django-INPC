@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Gestion des Points de Vente{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/stylecrud.css' %}">
+<div class="container mt-5">
+    <div class="card shadow-lg text-white animate__animated animate__fadeInDown">
+        <div class="card-header text-center">
+            <h1 class="display-4">Gestion des Points de Vente</h1>
+            <p class="lead">Ajoutez, modifiez et gérez les points de vente efficacement.</p>
+            <p id="clock"></p>
+        </div>
+
+        <div class="card-body animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between mb-3">
+                <!-- Export / Import Buttons -->
+                <a href="{% url 'export_data' %}?table=PointOfSale" class="btn btn-success">
+                    <i class="fas fa-file-export"></i> Exporter les Points de Vente
+                </a>
+                <a href="{% url 'import_data' %}" class="btn btn-success">
+                    <i class="fas fa-file-import"></i> Importer des données
+                </a>
+            </div>
+
+            <!-- Button to Open Add Point of Sale Modal -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Ajouter un Point de Vente
+            </button>
+
+            <!-- Points of Sale Table -->
+            <table class="table table-hover table-striped text-white">
+                <thead class="bg-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Code</th>
+                        <th>Type</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Commune</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for point in points_de_vente %}
+                    <tr class="animate__animated animate__fadeIn">
+                        <td>{{ point.id }}</td>
+                        <td>{{ point.code }}</td>
+                        <td>{{ point.type }}</td>
+                        <td>{{ point.gps_lat }}</td>
+                        <td>{{ point.gps_lon }}</td>
+                        <td>{{ point.commune.name }}</td>
+                        <td>
+                            <!-- Action Buttons -->
+                            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal{{ point.id }}">
+                                <i class="fas fa-eye"></i> Voir
+                            </button>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ point.id }}">
+                                <i class="fas fa-edit"></i> Modifier
+                            </button>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="point_id" value="{{ point.id }}">
+                                <button type="submit" name="supprimer" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add New Point of Sale -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ajouter un Point de Vente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Code</label>
+                        <input type="text" name="code" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <input type="text" name="type" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" step="any" name="gps_lat" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" step="any" name="gps_lon" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Commune</label>
+                        <select name="commune" class="form-control glowing-input" required>
+                            {% for commune in communes %}
+                            <option value="{{ commune.id }}">{{ commune.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/crud.js' %}"></script>
+
+<!-- Custom CSS -->
+
+{% endblock %}

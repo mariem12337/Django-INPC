@@ -1,0 +1,84 @@
+/* Beautiful Navbar */
+body {
+    background: url("{% static 'background.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.95;  /* Rend l'image légèrement transparente */
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.8);  /* Rend le contenu plus lisible */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    padding: 15px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+}
+
+.nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 10px 15px;
+    transition: 0.3s;
+}
+
+.nav-link.nav-hover:hover {
+    color: #007bff !important;
+    transform: translateY(-2px);
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.dropdown-menu {
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Button for Login */
+.btn-primary {
+    background-color: #007bff !important;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3 !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;  /* Ajoute un espace entre l'icône et le texte */
+    transition: all 0.3s ease-in-out;
+    white-space: nowrap; /* Empêche le texte d’être coupé */
+}
+
+.btn i {
+    min-width: 20px; /* Assure que l'icône ne bouge pas */
+}
+

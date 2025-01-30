@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Gestion des Prix des Produits{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/stylecrud.css' %}">
+<div class="container mt-5">
+    <div class="card shadow-lg text-white animate__animated animate__fadeInDown">
+        <div class="card-header text-center">
+            <h1 class="display-4">Gestion des Prix des Produits</h1>
+            <p class="lead">Ajoutez, modifiez et gérez les prix des produits efficacement.</p>
+            <p id="clock"></p>
+        </div>
+
+        <div class="card-body animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between mb-3">
+                <!-- Export / Import Buttons -->
+                <a href="{% url 'export_data' %}?table=ProductPrice" class="btn btn-success">
+                    <i class="fas fa-file-export"></i> Exporter les Prix des Produits
+                </a>
+                <a href="{% url 'import_data' %}" class="btn btn-success">
+                    <i class="fas fa-file-import"></i> Importer des données
+                </a>
+            </div>
+
+            <!-- Button to Open Add Price Modal -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Ajouter un Prix
+            </button>
+
+            <!-- Product Prices Table -->
+            <table class="table table-hover table-striped text-white">
+                <thead class="bg-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Valeur</th>
+                        <th>Date de Début</th>
+                        <th>Date de Fin</th>
+                        <th>Produit</th>
+                        <th>Point de Vente</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prix in prix_produits %}
+                    <tr class="animate__animated animate__fadeIn">
+                        <td>{{ prix.id }}</td>
+                        <td>{{ prix.valeur }}</td>
+                        <td>{{ prix.date_de_debut }}</td>
+                        <td>{{ prix.date_fin }}</td>
+                        <td>{{ prix.produit.name }}</td>
+                        <td>{{ prix.point_de_vente.code }}</td>
+                        <td>
+                            <!-- Action Buttons -->
+                            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal{{ prix.id }}">
+                                <i class="fas fa-eye"></i> Voir
+                            </button>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ prix.id }}">
+                                <i class="fas fa-edit"></i> Modifier
+                            </button>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_price_id" value="{{ prix.id }}">
+                                <button type="submit" class="btn btn-danger" name="supprimer">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">Aucun prix de produit trouvé.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add New Price -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ajouter un Prix</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Valeur</label>
+                        <input type="number" name="valeur" class="form-control glowing-input" placeholder="Entrez la valeur" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date de Début</label>
+                        <input type="date" name="date_de_debut" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date de Fin</label>
+                        <input type="date" name="date_fin" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Produit</label>
+                        {{ form.produit }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Point de Vente</label>
+                        {{ form.point_de_vente }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Enhancements -->
+<script src="{% static 'js/crud.js' %}"></script>
+
+<!-- Custom CSS -->
+
+{% endblock %}
