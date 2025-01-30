@@ -1,0 +1,45 @@
+
+
+networks:
+  django_network:
+    driver: bridge
+
+services:
+  djangoinpc_23054:
+    build: .
+    container_name: djangoinpc_23054
+    ports:
+      - "23054:8000"  # Host port 23054 mapped to container port 23054
+    volumes:
+      - .:/app
+    environment:
+      DJANGO_DB_HOST: mydb_23054
+      DJANGO_DB_PORT: 5432
+      DJANGO_DB_USER: django_user
+      DJANGO_DB_PASSWORD: secure_password
+      DJANGO_DB_NAME: django_db
+      DJANGO_SECRET_KEY: django-insecure-6*$@s4%pj36mr&$w8gfj8om2^jkw8)cq1cx$m%ofz2$b0#px$%
+      DJANGO_DEBUG: 'True'
+      DJANGO_ALLOWED_HOSTS: 'localhost,127.0.0.1,138.201.52.29'
+    depends_on:
+      - mydb_23054
+    networks:
+      - django_network
+    command: python manage.py runserver 0.0.0.0:8000
+
+  mydb_23054:  # Nom de la base de données avec votre matricule (exactement comme demandé)
+    image: postgres:15
+    container_name: mydb_23054  # Nom du container de la base de données avec votre matricule
+    ports:
+      - "24054:5432"  # Host port 5432 mapped to container port 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: django_user
+      POSTGRES_PASSWORD: secure_password
+      POSTGRES_DB: django_db
+    networks:
+      - django_network
+
+volumes:
+  postgres_data:

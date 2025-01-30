@@ -1,0 +1,27 @@
+/* Background Animation */
+body {
+    background: linear-gradient(-45deg, #1e3c72, #2a5298, #134e5e, #71b280);
+    background-size: 400% 400%;
+    animation: moveBackground 10s ease infinite;
+}
+
+/* Glowing Inputs */
+.glowing-input:focus {
+    border-color: #00c6ff;
+    box-shadow: 0 0 10px #00c6ff;
+    outline: none;
+}
+
+/* Stylish Header */
+.card-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+.card {
+    background: rgba(255, 255, 255, 0.3); /* Less transparent */
+    backdrop-filter: blur(10px); /* Add blur effect */
+}

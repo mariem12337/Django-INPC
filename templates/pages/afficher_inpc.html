@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Calcul de l'INPC{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg text-white animate__animated animate__fadeInDown">
+        <div class="card-header text-center">
+            <h1 class="display-4">Calcul de l'INPC</h1>
+            <p class="lead">Saisissez le mois et l'année pour obtenir l'indice national des prix à la consommation.</p>
+            <p id="clock"></p>
+        </div>
+
+        <div class="card-body animate__animated animate__fadeInUp">
+            <!-- Formulaire -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="mois">Mois :</label>
+                    <input type="number" id="mois" name="mois" class="form-control glowing-input" min="1" max="12" required>
+                </div>
+                <div class="form-group">
+                    <label for="annee">Année :</label>
+                    <input type="number" id="annee" name="annee" class="form-control glowing-input" required>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-calculator"></i> Calculer
+                    </button>
+                </div>
+            </form>
+
+            <!-- Résultat du calcul -->
+            {% if inpc %}
+                <div class="alert alert-success mt-4 animate__animated animate__fadeIn">
+                    <strong>INPC :</strong> L'indice pour {{ mois }}/{{ annee }} est <span class="inpc-value">{{ inpc }}</span>.
+                </div>
+            {% endif %}
+
+            <!-- Message d'erreur -->
+            {% if error_message %}
+                <div class="alert alert-danger mt-4 animate__animated animate__shakeX">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Enhancements -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+
+<style>
+/* Background Animation */
+@keyframes moveBackground {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    background: linear-gradient(-45deg, #1e3c72, #2a5298, #134e5e, #71b280);
+    background-size: 400% 400%;
+    animation: moveBackground 10s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Glowing Input Fields */
+.glowing-input {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.glowing-input:focus {
+    border-color: #00c6ff;
+    box-shadow: 0 0 10px #00c6ff;
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+}
+
+/* Smooth Card Entry */
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 700px;
+    width: 100%;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease-in-out;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+/* Stylish Card Header */
+.card-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 15px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+/* Button Enhancements */
+.btn-primary {
+    background: linear-gradient(45deg, #007bff, #00c6ff);
+    border: none;
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0px 0px 10px rgba(0, 198, 255, 0.5);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #00c6ff, #007bff);
+    transform: scale(1.08);
+    box-shadow: 0px 0px 15px rgba(0, 198, 255, 0.8);
+}
+
+/* INPC Result Number Animation */
+.inpc-value {
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: #00ff99;
+    transition: transform 0.3s ease-in-out;
+}
+
+.inpc-value:hover {
+    transform: scale(1.1);
+}
+
+/* Clock Display */
+#clock {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+    // Live Clock Update
+    function updateClock() {
+        let now = new Date();
+        let timeString = now.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        $("#clock").text("🕒 " + timeString);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // INPC Counter Animation
+    $(".inpc-value").each(function () {
+        let $this = $(this);
+        let value = parseFloat($this.text());
+        $this.text("0");
+        $({ countNum: 0 }).animate(
+            { countNum: value },
+            {
+                duration: 2000,
+                easing: "swing",
+                step: function () {
+                    $this.text(this.countNum.toFixed(2));
+                },
+                complete: function () {
+                    $this.text(value.toFixed(2));
+                },
+            }
+        );
+    });
+});
+</script>
+{% endblock %}

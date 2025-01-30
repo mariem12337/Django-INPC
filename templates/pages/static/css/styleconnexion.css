@@ -1,0 +1,27 @@
+/* 🌟 Assurer que le body prend toute la hauteur */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: url("{% static 'background.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+}
+
+/* 🌟 Centrer le formulaire verticalement et horizontalement */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Fixe la hauteur du conteneur à 100% de l'écran */
+}
+
+/* 🌟 Ajustement du formulaire */
+.login-card {
+    background: rgba(255, 255, 255, 0.9); /* Ajoute un fond légèrement transparent */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}

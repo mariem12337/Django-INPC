@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-primary">Importer des données</h1>
+    <form method="post" enctype="multipart/form-data" class="p-4 border rounded shadow bg-light">
+        {% csrf_token %}
+        
+        <!-- Sélection du modèle -->
+        <div class="mb-3">
+            <label for="model" class="form-label text-success">Sélectionnez un modèle :</label>
+            <select name="model" id="model" class="form-select border-success">
+                <option value="Wilaya">Wilayas</option>
+                <option value="Moughataa">Moughataas</option>
+                <option value="Commune">Communes</option>
+                <option value="Product">Produits</option>
+                <option value="PointOfSale">Points de vente</option>
+                <option value="ProductPrice">Prix des produits</option>
+                <option value="Cart">Paniers</option>
+                <option value="CartProducts">Produits dans les paniers</option>
+                <option value="Famille">Familles de produits</option>
+                <option value="Prix">Prix</option>
+            </select>
+        </div>
+        
+        <!-- Importation du fichier -->
+        <div class="mb-3">
+            <label for="file" class="form-label text-success">Choisir un fichier :</label>
+            <input type="file" name="file" id="file" class="form-control border-success bg-white" required>
+        </div>
+        
+        <!-- Bouton d'importation -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success px-4">Importer</button>
+        </div>
+    </form>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages mt-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} shadow-sm">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

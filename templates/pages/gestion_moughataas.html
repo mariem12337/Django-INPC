@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Gestion des Moughataas{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/stylecrud.css' %}">
+<div class="container mt-5">
+    <div class="card shadow-lg text-white animate__animated animate__fadeInDown">
+        <div class="card-header text-center">
+            <h1 class="display-4">Gestion des Moughataas</h1>
+            <p class="lead">Ajoutez, modifiez et gérez les Moughataas efficacement.</p>
+            <p id="clock"></p>
+        </div>
+
+        <div class="card-body animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between mb-3">
+                <!-- Export / Import Buttons -->
+                <a href="{% url 'export_data' %}?table=Moughataa" class="btn btn-success">
+                    <i class="fas fa-file-export"></i> Exporter les Moughataas
+                </a>
+                <a href="{% url 'import_data' %}" class="btn btn-success">
+                    <i class="fas fa-file-import"></i> Importer des données
+                </a>
+            </div>
+
+            <!-- Button to Open Add Moughataa Modal -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Ajouter une Moughataa
+            </button>
+
+            <!-- Moughataas Table -->
+            <table class="table table-hover table-striped text-white">
+                <thead class="bg-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Code</th>
+                        <th>Label</th>
+                        <th>Wilaya</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for moughataa in moughataas %}
+                    <tr class="animate__animated animate__fadeIn">
+                        <td>{{ moughataa.id }}</td>
+                        <td>{{ moughataa.code }}</td>
+                        <td>{{ moughataa.label }}</td>
+                        <td>{{ moughataa.wilaya.name }}</td>
+                        <td>
+                            <!-- Action Buttons -->
+                            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal{{ moughataa.id }}">
+                                <i class="fas fa-eye"></i> Voir
+                            </button>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ moughataa.id }}">
+                                <i class="fas fa-edit"></i> Modifier
+                            </button>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="moughataa_id" value="{{ moughataa.id }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add New Moughataa -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ajouter une Moughataa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Code</label>
+                        <input type="text" name="code" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Label</label>
+                        <input type="text" name="label" class="form-control glowing-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Wilaya</label>
+                        <select name="wilaya" class="form-control glowing-input" required>
+                            {% for wilaya in wilayas %}
+                            <option value="{{ wilaya.id }}">{{ wilaya.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Enhancements -->
+<script src="{% static 'js/crud.js' %}"></script>
+
+
+{% endblock %}

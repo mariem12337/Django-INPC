@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Produits dans les Paniers{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/stylecrud.css' %}">
+
+<div class="container mt-5">
+    <div class="card shadow-lg text-white animate__animated animate__fadeInDown">
+        <div class="card-header text-center">
+            <h1 class="display-4">Gestion des Produits dans les Paniers</h1>
+            <p class="lead">Ajoutez, modifiez et gérez les produits dans les paniers efficacement.</p>
+            <p id="clock"></p>
+        </div>
+
+        <div class="card-body animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between mb-3">
+                <!-- Export / Import Buttons -->
+                <a href="{% url 'export_data' %}?table=CartProducts" class="btn btn-success">
+                    <i class="fas fa-file-export"></i> Exporter les Produits dans les Paniers
+                </a>
+                <a href="{% url 'import_data' %}" class="btn btn-success">
+                    <i class="fas fa-file-import"></i> Importer des données
+                </a>
+            </div>
+
+            <!-- Button to Open Add Product to Cart Modal -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Ajouter un Produit au Panier
+            </button>
+
+            <!-- Cart Products Table -->
+            <table class="table table-hover table-striped text-white">
+                <thead class="bg-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Produit</th>
+                        <th>Panier</th>
+                        <th>Pondération</th>
+                        <th>Date de Début</th>
+                        <th>Date de Fin</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cart_product in cart_products %}
+                    <tr class="animate__animated animate__fadeIn">
+                        <td>{{ cart_product.id }}</td>
+                        <td>{{ cart_product.product.name }}</td>
+                        <td>{{ cart_product.cart.name }}</td>
+                        <td>{{ cart_product.weight }}</td>
+                        <td>{{ cart_product.date_from }}</td>
+                        <td>{{ cart_product.date_to }}</td>
+                        <td>
+                            <!-- Action Buttons -->
+                            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal{{ cart_product.id }}">
+                                <i class="fas fa-eye"></i> Voir
+                            </button>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ cart_product.id }}">
+                                <i class="fas fa-edit"></i> Modifier
+                            </button>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_id" value="{{ cart_product.id }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/cart_products.js' %}"></script>
+{% endblock %}
