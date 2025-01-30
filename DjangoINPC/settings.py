@@ -20,7 +20,9 @@ INSTALLED_APPS = [
     'pages.apps.PagesConfig',
     'import_export',
 ]
-
+CSRF_TRUSTED_ORIGINS = [
+    'http://138.201.52.29:25054',
+]
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
