@@ -20,7 +20,7 @@ services:
       DJANGO_DB_NAME: django_db
       DJANGO_SECRET_KEY: django-insecure-6*$@s4%pj36mr&$w8gfj8om2^jkw8)cq1cx$m%ofz2$b0#px$%
       DJANGO_DEBUG: 'True'
-      DJANGO_ALLOWED_HOSTS: 'localhost,127.0.0.1,138.201.52.29'
+      DJANGO_ALLOWED_HOSTS: '*'
     depends_on:
       - mydb_23054
     networks:
